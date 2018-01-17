@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>商品列表</title>
+    {literal}
+    <link rel="stylesheet" href="__STATIC__admin/styles/backstage.css">
+    <link rel="stylesheet" href="__STATIC__admin/scripts/jquery-ui/css/ui-lightness/jquery-ui-1.10.4.custom.css"/>
+    <script src="__STATIC__admin/scripts/jquery-ui/js/jquery-1.10.2.js"></script>
+    <script src="__STATIC__admin/scripts/jquery-ui/js/jquery-ui-1.10.4.custom.js"></script>
+    <script src="__STATIC__admin/scripts/jquery-ui/js/jquery-ui-1.10.4.custom.min.js"></script>
+    {/literal}
+</head>
+
+<body>
+<div class="details">
+    <div class="details_operation clearfix">
+        <div class="bui_select">
+            <input type="button" value="添&nbsp;&nbsp;加" class="add" onclick="addPro()">
+        </div>
+        <div class="fr">
+            <div class="text">
+                <span>商品价格：</span>
+                <div class="bui_select">
+                    <select class="select" onchange="change(this.value)">
+                        <option value="">-请选择-</option>
+                        <option value="iPrice asc">由低到高</option>
+                        <option value="iPrice desc">由高到低</option>
+                    </select>
+                </div>
+            </div>
+            <div class="text">
+                <span>上架时间：</span>
+                <div class="bui_select">
+                    <select class="select" onchange="change(this.value)">
+                        <option value="">-请选择-</option>
+                        <option value="pubTime desc">最新发布</option>
+                        <option value="pubTime asc">历史发布</option>
+                    </select>
+                </div>
+            </div>
+            <div class="text">
+                <span>搜索</span>
+                <input type="text" value="" class="search" id="search" onkeypress="search()" placeholder="请输入商品名称">
+            </div>
+        </div>
+    </div>
+    <!--表格-->
+    <table class="table" cellspacing="0" cellpadding="0">
+        <thead>
+        <tr>
+            <th width="10%">编号</th>
+            <th width="20%">商品名称</th>
+            <th width="40%">商品图片</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $rows as $row}
+        <tr>
+            <td><input type="checkbox" id="{$row.id}" class="check"><label
+                    for="{$row.id}" class="label">{$row.id}</label></td>
+            <td>{$row.pName}</td>
+            <td>
+                {assign name="imgs" value="$row.id|getImgByProId"}
+                {foreach $imgs as $img}
+                <img width="100" height="100" src="__STATIC__index/images/uploads/{$img}" alt=""/>&nbsp;&nbsp;
+                {/foreach}
+            </td>
+            <td>
+                <input type="button" value="添加文字水印" onclick="doImg('{$row.id}','waterText')"
+                       class="btn"/>
+                <input type="button" value="添加图片水印" onclick="doImg('{$row.id}','waterPic')"
+                       class="btn"/>
+            </td>
+        </tr>
+        {/foreach}
+        {if $total gt $size}
+        <tr>
+            <td colspan="4">{$showPage}</td>
+        </tr>
+        {/if}
+        </tbody>
+    </table>
+</div>
+{literal}
+<script type="text/javascript">
+
+    function addPro() {
+        window.location = 'addPro';
+    }
+
+    function search() {
+        if (event.keyCode === 13) {
+            var val = document.getElementById("search").value;
+            window.location = "listProImages.php?keywords=" + val;
+        }
+    }
+
+    function change(val) {
+        window.location = "listProImages.php?order=" + val;
+    }
+
+    function doImg(id, act) {
+        window.location = "doAdminAction.php?act=" + act + "&id=" + id;
+    }
+</script>
+{/literal}
+</body>
+</html>

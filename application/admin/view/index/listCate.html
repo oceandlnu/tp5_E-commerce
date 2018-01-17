@@ -1,0 +1,62 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>分类列表</title>
+    <link rel="stylesheet" href="__STATIC__admin/styles/backstage.css">
+</head>
+<body>
+<div class="details">
+    <div class="details_operation clearfix">
+        <div class="bui_select">
+            <input type="button" value="添&nbsp;&nbsp;加" class="add" onclick="addCate()">
+        </div>
+    </div>
+    <!--表格-->
+    <table class="table" cellspacing="0" cellpadding="0">
+        <thead>
+        <tr>
+            <th width="15%">编号</th>
+            <th width="25%">分类</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $rows as $row}
+        <tr>
+            <td><input type="checkbox" id="{$row.id}" class="check"><label for="{$row.id}"
+                                                                           class="label">{$row.id}</label></td>
+            <td>{$row.cName}</td>
+            <td align="center"><input type="button" value="修改" class="btn"
+                                      onclick="editCate({$row.id})"><input type="button" value="删除"
+                                                                           class="btn"
+                                                                           onclick="delCate({$row.id})">
+            </td>
+        </tr>
+        {/foreach}
+        {if $total gt $size}
+        <tr>
+            <td colspan="4">{$showPage}</td>
+        </tr>
+        {/if}
+        </tbody>
+    </table>
+</div>
+{literal}
+<script type="text/javascript">
+    function addCate() {
+        window.location = "addCate";
+    }
+
+    function editCate(id) {
+        window.location = "editCate?id=" + id;
+    }
+
+    function delCate(id) {
+        if (window.confirm("确定要删除吗?删除之后不可恢复")) {
+            window.location = "delCate?id=" + id;
+        }
+    }
+</script>
+{/literal}
+</body>
+</html>

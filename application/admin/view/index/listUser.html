@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>用户列表</title>
+    <link rel="stylesheet" href="__STATIC__admin/styles/backstage.css">
+</head>
+<body>
+<div class="details">
+    <div class="details_operation clearfix">
+        <div class="bui_select">
+            <input type="button" value="添&nbsp;&nbsp;加" class="add" onclick="addUser()">
+        </div>
+
+    </div>
+    <!--表格-->
+    <table class="table" cellspacing="0" cellpadding="0">
+        <thead>
+        <tr>
+            <th width="15%">编号</th>
+            <th width="20%">用户名</th>
+            <th width="20%">邮箱</th>
+            <th width="10%">性别</th>
+            <th width="10%">激活状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $rows as $row}
+        <tr>
+            <td><input type="checkbox" id="{$row.id}" class="check"><label for="{$row.id}"
+                                                                             class="label">{$row.id}</label></td>
+            <td>{$row.username}</td>
+            <td>{$row.email}</td>
+            <td>{$row.sex}</td>
+            <td>
+                {if $row.activeFlag eq 1}
+                激活
+                {else}
+                未激活
+                {/if}
+            </td>
+            <td align="center">
+                <input type="button" value="修改" class="btn" onclick="editUser({$row.id})">
+                <input type="button" value="删除" class="btn" onclick="delUser({$row.id})">
+            </td>
+        </tr>
+        {/foreach}
+        {if $total gt $size}
+        <tr>
+            <td colspan="6">{$showPage}</td>
+        </tr>
+        {/if}
+        </tbody>
+    </table>
+</div>
+{literal}
+<script type="text/javascript">
+    function addUser() {
+        window.location = "addUser";
+    }
+
+    function editUser(id) {
+        window.location = "editUser?id=" + id;
+    }
+
+    function delUser(id) {
+        if (window.confirm("确定要删除吗?删除之后不可恢复")) {
+            window.location = "delUser?id=" + id;
+        }
+    }
+</script>
+{/literal}
+</body>
+</html>
