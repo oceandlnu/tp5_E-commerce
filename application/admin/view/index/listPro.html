@@ -27,8 +27,8 @@
                 <div class="bui_select">
                     <select class="select" onchange="change(this.value)">
                         <option value="">-请选择-</option>
-                        <option value="iPrice asc">由低到高</option>
-                        <option value="iPrice desc">由高到低</option>
+                        <option value="p.iPrice asc">由低到高</option>
+                        <option value="p.iPrice desc">由高到低</option>
                     </select>
                 </div>
             </div>
@@ -37,8 +37,8 @@
                 <div class="bui_select">
                     <select class="select" onchange="change(this.value)">
                         <option value="">-请选择-</option>
-                        <option value="pubTime desc">最新发布</option>
-                        <option value="pubTime asc">历史发布</option>
+                        <option value="p.pubTime desc">最新发布</option>
+                        <option value="p.pubTime asc">历史发布</option>
                     </select>
                 </div>
             </div>
@@ -184,12 +184,12 @@
     function search() {
         if (event.keyCode === 13) {
             var val = document.getElementById("search").value;
-            window.location = "listPro.php?keywords=" + val;
+            window.location = "listPro?keywords=" + val;
         }
     }
 
     function change(val) {
-        window.location = "listPro.php?order=" + val;
+        window.location = "listPro?order=" + val;
     }
 </script>
 {/literal}

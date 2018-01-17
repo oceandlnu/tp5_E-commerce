@@ -93,16 +93,16 @@
     function search() {
         if (event.keyCode === 13) {
             var val = document.getElementById("search").value;
-            window.location = "listProImages.php?keywords=" + val;
+            window.location = "listProImages?keywords=" + val;
         }
     }
 
     function change(val) {
-        window.location = "listProImages.php?order=" + val;
+        window.location = "listProImages?order=" + val;
     }
 
     function doImg(id, act) {
-        window.location = "doAdminAction.php?act=" + act + "&id=" + id;
+        window.location = "addWater?act=" + act + "&id=" + id;
     }
 </script>
 {/literal}

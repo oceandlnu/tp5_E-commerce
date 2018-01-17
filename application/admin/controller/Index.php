@@ -158,10 +158,18 @@ class Index extends Controller
     {
         $request = Request::instance();
         $data = $request->post();
-        $data['password'] = md5($data['password']);
-        $admin = new Admin($data);
-        $admin->allowField(true)->save();
-        $this->success('', 'listAdmin');
+        if (!$data['username']) {
+            alertMes("请输入管理员名称");
+            $this->success('', 'addAdmin');
+        } elseif (!$data['password']) {
+            alertMes("请输入密码");
+            $this->success('', 'addAdmin');
+        } else {
+            $data['password'] = md5($data['password']);
+            $admin = new Admin($data);
+            $admin->allowField(true)->save();
+            $this->success('', 'listAdmin');
+        }
     }
 
     /**
@@ -231,6 +239,13 @@ class Index extends Controller
     {
         $request = Request::instance();
         $id = $request->get('id');
+        $facePath = "public/static/index/images/userFaces";
+        $faceImg = User::where('id', $id)->value('face');
+        if ($faceImg) {
+            if (file_exists(ROOT_PATH . $facePath . DS . $faceImg)) {
+                unlink(ROOT_PATH . $facePath . DS . $faceImg);
+            }
+        }
         $res = User::destroy($id);
         if ($res) {
             alertMes("删除成功");
@@ -328,11 +343,15 @@ class Index extends Controller
     {
         $request = Request::instance();
         $id = $request->get('id');
-        $res = Cate::destroy($id);
-        if ($res) {
-            alertMes("删除成功");
+        if (Pro::all(['cId' => $id])) {
+            alertMes("请先删除该分类下的商品");
         } else {
-            alertMes("删除失败");
+            $res = Cate::destroy($id);
+            if ($res) {
+                alertMes("删除成功");
+            } else {
+                alertMes("删除失败");
+            }
         }
         $this->success('', 'listCate');
     }
@@ -359,6 +378,10 @@ class Index extends Controller
     public function addPro()
     {
         $rows = Cate::all();
+        if (!$rows){
+            alertMes("没有分类，请先添加分类");
+            $this->success('', 'addCate');
+        }
         $this->assign('rows', $rows);
         return $this->fetch();
     }
@@ -366,22 +389,20 @@ class Index extends Controller
     public function listPro()
     {
         $request = Request::instance();
-        if (!$request->has('page', 'get')) {
-            $page = 1;
-        } else {
-            $page = $request->get('page');
-        }
+        $page = $request->has('page', 'get') ? $request->get('page') : 1;
+        $keywords = $request->has('keywords', 'get') ? $request->get('keywords') : null;
+        $order = $request->has('order', 'get') ? $request->get('order') : null;
         // 查询状态为1的用户数据 并且每页显示size条数据
         $url = $request->baseUrl();
         $size = 2;
 //        $pro = new Pro();
 //        $rows = $pro->paginate($size);
         $str = "p.id,p.pName,p.pSn,p.pNum,p.mPrice,p.iPrice,p.pDesc,p.pubTime,p.isShow,p.isHot,c.cName";
-        $rows = Db::name('pro')->field($str)->alias('p')->join('shop_cate c', 'p.cId=c.id')->paginate($size);
+        $rows = Db::name('pro')->field($str)->alias('p')->where("p.pName like '%{$keywords}%'")->order($order)->join('shop_cate c', 'p.cId=c.id')->paginate($size);
 //        dump($rows);
         $total = $rows->total();
         $totalPage = ceil($total / $size);
-        $showPage = showPage($page, $totalPage, $url);
+        $showPage = showPage($page, $totalPage, $url, "keywords={$keywords}&order={$order}");
         // 把分页数据赋值给模板变量rows
         $this->assign('rows', $rows);
         $this->assign('size', $size);
@@ -416,8 +437,8 @@ class Index extends Controller
                 unlink(ROOT_PATH . $imagesPath . DS . $proImg['albumPath']);
             }
             foreach ($thumbSizes as $thumbSize) {
-                if (file_exists(ROOT_PATH . $imagesPath . DS . "image_" . $thumbSize . DS . $proImg['albumPath'])) {
-                    unlink(ROOT_PATH . $imagesPath . DS . "image_" . $thumbSize . DS . $proImg['albumPath']);
+                if (file_exists(ROOT_PATH . $imagesPath . DS . "images_" . $thumbSize . DS . $proImg['albumPath'])) {
+                    unlink(ROOT_PATH . $imagesPath . DS . "images_" . $thumbSize . DS . $proImg['albumPath']);
                 }
             }
         }
@@ -430,62 +451,43 @@ class Index extends Controller
         $this->success('', 'listPro');
     }
 
-    public function listProImages()
-    {
-        $request = Request::instance();
-        if (!$request->has('page', 'get')) {
-            $page = 1;
-        } else {
-            $page = $request->get('page');
-        }
-        // 查询状态为1的用户数据 并且每页显示size条数据
-        $url = $request->baseUrl();
-        $size = 2;
-        $admin = new Pro();
-        $rows = $admin->paginate($size);
-        $total = $rows->total();
-        $totalPage = ceil($total / $size);
-        $showPage = showPage($page, $totalPage, $url);
-        // 把分页数据赋值给模板变量rows
-        $this->assign('rows', $rows);
-        $this->assign('size', $size);
-        $this->assign('total', $total);
-        $this->assign('showPage', $showPage);
-        // 渲染模板输出
-        return $this->fetch();
-    }
 
     public function doAddPro()
     {
         $request = Request::instance();
         $data = $request->post();
         $data['pubTime'] = time();
-        $pro = new Pro($data);
-        $pro->allowField(true)->save();
-        $albumData['pid'] = $pro->id;
         $imagesPath = "public/static/index/images/uploads";
         $files = $request->file('thumbs');
         $thumbSizes = [800, 350, 220, 50];
 //        $thumbSizes = [];
         if ($files) {
-            $vali = ['ext' => 'jpg,png,gif'];
-            $rule = 'uniqid';
-            foreach ($files as $file) {
-                $info = $file->rule($rule)->validate($vali)->move(ROOT_PATH . $imagesPath);
-                if ($info) {
-                    $albumData['albumPath'] = $info->getSaveName();
-                    $image = Image::open(ROOT_PATH . $imagesPath . DS . $albumData['albumPath']);
-                    foreach ($thumbSizes as $thumbSize) {
-                        $image->thumb($thumbSize, $thumbSize, Image::THUMB_FIXED)->save(ROOT_PATH . $imagesPath . DS . "images_" . $thumbSize . DS . $albumData['albumPath']);
+            if ($data['pName']) {
+                $pro = new Pro($data);
+                $pro->allowField(true)->save();
+                $albumData['pid'] = $pro->id;
+                $vali = ['ext' => 'jpg,png,gif'];
+                $rule = 'uniqid';
+                foreach ($files as $file) {
+                    $info = $file->rule($rule)->validate($vali)->move(ROOT_PATH . $imagesPath);
+                    if ($info) {
+                        $albumData['albumPath'] = $info->getSaveName();
+                        $image = Image::open(ROOT_PATH . $imagesPath . DS . $albumData['albumPath']);
+                        foreach ($thumbSizes as $thumbSize) {
+                            $image->thumb($thumbSize, $thumbSize, Image::THUMB_FIXED)->save(ROOT_PATH . $imagesPath . DS . "images_" . $thumbSize . DS . $albumData['albumPath']);
+                        }
+                    } else {
+                        echo $info->getError();
                     }
-                } else {
-                    echo $info->getError();
+                    $album = new Album($albumData);
+                    $album->allowField(true)->save();
                 }
-                $album = new Album($albumData);
-                $album->allowField(true)->save();
+                alertMes("添加成功");
+                $this->success('', 'listPro');
+            } else {
+                alertMes("请填写完整的商品信息");
+                $this->success('', 'addPro');
             }
-            alertMes("添加成功");
-            $this->success('', 'listPro');
         } else {
             alertMes("请上传商品图片");
             $this->success('', 'addPro');
@@ -524,5 +526,56 @@ class Index extends Controller
             $this->success('修改成功', 'listPro');
         }
         $this->success('修改成功', 'listPro');
+    }
+
+    public function listProImages()
+    {
+        $request = Request::instance();
+        $page = $request->has('page', 'get') ? $request->get('page') : 1;
+        $keywords = $request->has('keywords', 'get') ? $request->get('keywords') : null;
+        $order = $request->has('order', 'get') ? $request->get('order') : null;
+        // 查询状态为1的用户数据 并且每页显示size条数据
+        $url = $request->baseUrl();
+        $size = 2;
+        $admin = new Pro();
+        $rows = $admin->where("pName like '%{$keywords}%'")->order($order)->paginate($size);
+        $total = $rows->total();
+        $totalPage = ceil($total / $size);
+        $showPage = showPage($page, $totalPage, $url, "keywords={$keywords}&order={$order}");
+        // 把分页数据赋值给模板变量rows
+        $this->assign('rows', $rows);
+        $this->assign('size', $size);
+        $this->assign('total', $total);
+        $this->assign('showPage', $showPage);
+        // 渲染模板输出
+        return $this->fetch();
+    }
+
+    public function addWater()
+    {
+        $request = Request::instance();
+        $data = $request->get();
+        $images = getImgByProId($data['id']);
+        $imagesPath = "public/static/index/images/uploads";
+        if ($data['act'] == 'waterText') {
+            $text = "Ocean";
+            $fonts = ["SIMYOU.TTF", "simsun.ttf"];
+            $fontsPath = "public/static/admin/fonts";
+            $font_size = 20;
+            $font_color = "#ffffff";
+            foreach ($images as $image) {
+                $img = Image::open(ROOT_PATH . $imagesPath . DS . $image);
+                $img->text($text, ROOT_PATH . $fontsPath . DS . $fonts[0], $font_size, $font_color)->save(ROOT_PATH . $imagesPath . DS . $image);
+            }
+        } elseif ($data['act'] == 'waterPic') {
+            $logo = "logo.png";
+            $logoPath = "public/static/index/images";
+            foreach ($images as $image) {
+                $img = Image::open(ROOT_PATH . $imagesPath . DS . $image);
+                $img->water(ROOT_PATH . $logoPath . DS . $logo, Image::WATER_NORTHWEST)->save(ROOT_PATH . $imagesPath . DS . $image);
+            }
+        }
+        alertMes("添加成功");
+        $this->success('', 'listProImages', '', 1);
     }
 }
