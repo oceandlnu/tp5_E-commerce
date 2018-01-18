@@ -24,13 +24,18 @@
 </div>
 <div class="loginBox">
     <div class="login_cont">
-        <form action="doAction.php?act=login" method="post">
+        <form action="__PUBLIC__index/index/check" method="post">
             <ul class="login clearfix">
                 <li class="l_tit">邮箱/用户名/手机号</li>
                 <li class="mb_10"><input type="text" class="login_input user_icon" name="username" placeholder="请输入用户名"></li>
                 <li class="l_tit">密码</li>
                 <li class="mb_10"><input type="password" class="login_input passwd_icon" name="password" placeholder="请输入密码"></li>
-                <li class="autoLogin fl"><input type="checkbox" id="a1" class="checked"><label for="a1">自动登录</label></li>
+                <li class="l_tit">验证码</li>
+                <li class="mb_10"><input name="verify" type="text" class="login_input" placeholder="请输入验证码"></li>
+                <li><img src="{:captcha_src()}" alt="captcha" id="verify"/>&nbsp;&nbsp;<a href="javascript:void(0)"
+                                                                                          onclick="document.getElementById('verify').src='{:captcha_src()}?'+Math.random()">看不清楚?点击刷新</a>
+                </li>
+                <li class="autoLogin fl"><input type="checkbox" id="a1" class="checked" name="autoFlag" value="1"><label for="a1">自动登录</label></li>
                 <li class="controlsLogin fl"><input type="checkbox" id="a2" class="checked"><label for="a2">安全控件登录</label></li>
                 <li class="forgetPasswd"><a href="#">忘记密码?</a></li>
                 <li><input type="submit" value="" class="login_btn"></li>

@@ -39,12 +39,12 @@
             </div>
             <div class="rightArea">
                 欢迎来到电商网站！
-                {if $Think.session.loginFlag neq null}
-                <span>欢迎您</span>{$Think.session.username}<a href="userOut">[退出]</a>
-                {elseif $Think.cookie.loginFlag neq null}
-                <span>欢迎您</span>{$Think.cookie.username}<a href="userOut">[退出]</a>
+                {if $Think.session.userId neq null}
+                <span>欢迎您</span>{$Think.session.userName}&nbsp;&nbsp;<a href="__PUBLIC__index/index/logout">[退出]</a>
+                {elseif $Think.cookie.userId neq null}
+                <span>欢迎您</span>{$Think.cookie.userName}&nbsp;&nbsp;<a href="__PUBLIC__index/index/logout">[退出]</a>
                 {else}
-                <a href="login">[登录]</a><a href="reg">[免费注册]</a>
+                <a href="__PUBLIC__index/index/login">[登录]</a><a href="__PUBLIC__index/index/reg">[免费注册]</a>
                 {/if}
             </div>
         </div>

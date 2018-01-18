@@ -82,7 +82,9 @@ class Admin extends Model
      */
     public static function logout()
     {
-        Session::clear();
+//        Session::clear();
+        Session::delete('adminId');
+        Session::delete('adminName');
         Cookie::delete('adminId');
         Cookie::delete('adminName');
         Cookie::delete('PHPSESSID');

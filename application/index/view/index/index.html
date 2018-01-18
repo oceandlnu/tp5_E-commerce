@@ -20,12 +20,12 @@
             </div>
             <div class="rightArea">
                 欢迎来到电商网站！
-                {if $Think.session.loginFlag neq null}
-                <span>欢迎您</span>{$Think.session.username}<a href="userOut">[退出]</a>
-                {elseif $Think.cookie.loginFlag neq null}
-                <span>欢迎您</span>{$Think.cookie.username}<a href="userOut">[退出]</a>
+                {if $Think.session.userId neq null}
+                <span>欢迎您</span>{$Think.session.userName}&nbsp;&nbsp;<a href="__PUBLIC__index/index/logout">[退出]</a>
+                {elseif $Think.cookie.userId neq null}
+                <span>欢迎您</span>{$Think.cookie.userName}&nbsp;&nbsp;<a href="__PUBLIC__index/index/logout">[退出]</a>
                 {else}
-                <a href="__PUBLIC__/index/index/login">[登录]</a><a href="__PUBLIC__/index/index/reg">[免费注册]</a>
+                <a href="__PUBLIC__index/index/login">[登录]</a><a href="__PUBLIC__index/index/reg">[免费注册]</a>
                 {/if}
             </div>
         </div>
@@ -177,9 +177,10 @@
             {assign name="proImg" value="$pro.id|getProImgById"}
             <div class="shop_item">
                 <div class="shop_img">
-                    <a href="__PUBLIC__/index/index/proDetails?id={$pro.id}" target="_blank"><img width="187" height="200"
-                                                                           src="__STATIC__index/images/uploads/{$proImg}"
-                                                                           alt=""></a>
+                    <a href="__PUBLIC__/index/index/proDetails?id={$pro.id}" target="_blank"><img width="187"
+                                                                                                  height="200"
+                                                                                                  src="__STATIC__index/images/uploads/{$proImg}"
+                                                                                                  alt=""></a>
                 </div>
                 <h4>{$pro.pName}</h4>
                 <p>{$pro.iPrice}元</p>
@@ -192,9 +193,10 @@
             {assign name="proSmallImg" value="$proSmall.id|getProImgById"}
             <div class="shopItem_sm">
                 <div class="shopItem_smImg">
-                    <a href="__PUBLIC__/index/index/proDetails?id={$proSmall.id}" target="_blank"><img width="95" height="95"
-                                                                                src="__STATIC__index/images/uploads/{$proSmallImg}"
-                                                                                alt=""></a>
+                    <a href="__PUBLIC__/index/index/proDetails?id={$proSmall.id}" target="_blank"><img width="95"
+                                                                                                       height="95"
+                                                                                                       src="__STATIC__index/images/uploads/{$proSmallImg}"
+                                                                                                       alt=""></a>
                 </div>
                 <div class="shopItem_text">
                     <h4>{$proSmall.pName}</h4>
