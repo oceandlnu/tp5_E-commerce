@@ -9,10 +9,11 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 use think\Route;
-//use think\Url;
+use app\admin\model\Cate;
 
-Route::get('/',function (){
-    return "首页";
+Route::get('/', function () {
+    $cates = Cate::all();
+    return view('index@index/index', ['cates' => $cates]);
 });
 
 //Route::rule('new/:p1/:p2','admin/Index/admin');

@@ -11,6 +11,7 @@
 
 // 应用公共文件
 use app\admin\model\Album;
+use app\admin\model\Pro;
 
 function alertMes($mes)
 {
@@ -44,4 +45,19 @@ function getImgByProId($pid)
 {
     $rows = Album::where('pid', $pid)->column('albumPath');
     return $rows;
+}
+
+//根据cid获取商品
+function getProBycId($cid, $offset, $length)
+{
+    $str = "p.id,p.pName,p.pSn,p.pNum,p.mPrice,p.iPrice,p.pDesc,p.pubTime,p.isShow,p.isHot,c.cName,p.cId";
+    $rows = Pro::alias('p')->field($str)->join('shop_cate c', 'p.cId=c.id')->where(['p.cId' => $cid])->limit($offset, $length)->select();
+    return $rows;
+}
+
+//根据商品id得到第一张商品图片
+function getProImgById($id)
+{
+    $row = Album::where(['pid' => $id])->value('albumPath');
+    return $row;
 }

@@ -2,12 +2,14 @@
 
 namespace app\index\controller;
 
-//use think\View;
 use think\Controller;
-use app\index\model\User;
 use think\Request;
 use think\Db;
-use think\db\Query;
+use app\admin\model\Admin;
+use app\admin\model\User;
+use app\admin\model\Cate;
+use app\admin\model\Pro;
+use app\admin\model\Album;
 
 class Index extends Controller
 {
@@ -18,55 +20,50 @@ class Index extends Controller
 
     public function index()
     {
-        $this->view->engine->layout(true);
+//        $this->view->engine->layout(true);
+        $cates = Cate::all();
+        $this->assign('cates', $cates);
         return $this->fetch();
     }
 
-    public function selectUser()
+    public function login()
     {
-        $user = new User();
-        $list = [
-            ['username' => 'yang3', 'password' => 'ocean', 'email' => '136494666@qq.com'],
-            ['username' => 'yang4', 'password' => 'ocean', 'email' => '136494666@qq.com'],
-        ];
-        $user->allowField(true)->saveAll($list);
-        echo $user->create_time;
-        echo $user->update_time;
+        return $this->fetch();
     }
 
-    public function addUser()
+    public function reg()
     {
-        $user = new User;
-        $list = [
-            ['username' => 'yang1', 'password' => 'ocean', 'email' => '136494666@qq.com'],
-            ['username' => 'yang2', 'password' => 'ocean', 'email' => '136494666@qq.com'],
-        ];
-        return $user->where('id', 2)->find();
-//        return $user->isUpdate()->allowField(true)->saveAll($list);
+        return $this->fetch();
     }
 
-    public function user()
+    public function proCate()
     {
-        /*Db::listen(function($sql, $time, $explain){
-            // 记录SQL
-            echo $sql. ' ['.$time.'s]';
-            // 查看性能分析结果
-            dump($explain);
-        });*/
-//        $query = new Query();
-//        return $query->name('admin')->where('id', 2)->select();
-//        return dump($query->name('admin')->where('id',2)->select());
-//        return dump(Db::getTableInfo('__ADMIN__'));
-//        return json(Db::query('select * from shop_admin where id=:id',['id'=>2]));
-//        $request = Request::instance();
-//        $userId="哈哈";
-//        return dump($request->user($userId));
-        return $this->fetch('./template/public/index.html');
+        return $this->fetch();
     }
 
-    public function hello($id = 1)
+    public function proDetails()
     {
-        return "index模块->hello方法->id=" . $id;
+        $request = Request::instance();
+        $id = $request->get('id');
+        $str = "p.id,p.pName,p.pSn,p.pNum,p.mPrice,p.iPrice,p.pDesc,p.pubTime,p.isShow,p.isHot,c.cName,p.cId";
+        $proInfo = Pro::alias('p')->field($str)->join('shop_cate c', 'p.cId=c.id')->where(['p.id' => $id])->find();
+        $proImgs=Album::where(['pid'=>$id])->column('albumPath');
+        $this->assign('proInfo', $proInfo);
+        $this->assign('proImgs', $proImgs);
+        $this->assign('id', $id);
+//        dump($proImgs);
+        return $this->fetch();
+    }
+
+    public function shopCar()
+    {
+        return $this->fetch();
+    }
+
+    public function filter()
+    {
+        return $this->fetch();
+
     }
 
     public function _empty()
