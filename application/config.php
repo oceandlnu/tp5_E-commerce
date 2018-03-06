@@ -143,13 +143,14 @@ return [
         // 标签库标签结束标记
         'taglib_end'   => '}',
         //禁止在模板使用原生php代码
-        'tpl_deny_php' => 'true',
+//        'tpl_deny_php' => 'true',
     ],
 
     // 视图输出字符串内容替换
     'view_replace_str'       => [
         '__STATIC__'=>'/tp5/public/static/',
         '__PUBLIC__'=>'/tp5/public/',
+        '__APP__'=>'/tp5/application/'
     ],
     // 默认跳转页面对应的模板文件
     'dispatch_success_tmpl'  => THINK_PATH . 'tpl' . DS . 'dispatch_jump.tpl',

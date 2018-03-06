@@ -12,6 +12,7 @@
 // 应用公共文件
 use app\admin\model\Album;
 use app\admin\model\Pro;
+use think\Db;
 
 function alertMes($mes)
 {
@@ -60,4 +61,10 @@ function getProImgById($id)
 {
     $row = Album::where(['pid' => $id])->value('albumPath');
     return $row;
+}
+
+function getProCountBycId($id)
+{
+    $proCount = Db::name('pro')->where(['cId' => $id])->count();
+    return $proCount;
 }

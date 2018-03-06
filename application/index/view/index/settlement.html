@@ -1,0 +1,100 @@
+{layout name="layout" /}
+<div class="row" style="background: url('__STATIC__index/images/bg01.jpg') 100% 100% no-repeat;padding: 15px">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 card" style="padding: 30px;margin-top: 10px">
+                <h3>收货地址</h3>
+                <table class="table table-bordered table-hover">
+                    <tbody>
+                    {foreach $adds as $add}
+                    <tr>
+                        <td class="td-address"><input type="radio" id="{$add.id}" class="check"><label for="{$add.id}" class="label">{$add.address}</label></td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 20px">
+            <div class="col-12 card" style="padding: 30px;margin-top: 10px">
+                <h3>订单信息</h3>
+                <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th><span>商品名称</span></th>
+                        <th><span>单价</span></th>
+                        <th><span>数量</span></th>
+                        <th><span>小计</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach $rows as $row}
+                    <tr>
+                        <td><a href="__PUBLIC__index/index/proDetails?id={$row.pId}"><span>{$row.pName}</span></a></td>
+                        <td>￥<span id="iPrice">{$row.iPrice}</span></td>
+                        <td><span id="number">{$row.number}</span></td>
+                        <td class="text-danger">￥<span id="cPrice" class="cPrice">{$row.iPrice*$row.number}</span></td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 20px">
+            <div class="col-12 card" style="padding: 30px;margin-top: 10px">
+                <h3>订单结算</h3>
+                <table class="table table-bordered table-hover">
+                    <tbody>
+                    <tr>
+                        <td class="text-danger"><h4 style="display: inline-block" class="text-dark">总计：</h4>￥<span class="Price"></span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <!-- 按钮：用于打开模态框 -->
+                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal">提交订单</button>
+
+                            <!-- 模态框 -->
+                            <div class="modal fade" id="myModal">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+
+                                        <!-- 模态框头部 -->
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">支付</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+
+                                        <!-- 模态框主体 -->
+                                        <div class="modal-body">
+                                            <img src="__STATIC__alipay/alipay.jpg" alt="支付宝支付">
+                                        </div>
+
+                                        <!-- 模态框底部 -->
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var totalCost=0;
+        $(".cPrice").each(function () {
+            totalCost+=parseInt($(this).text());
+        });
+        $(".Price").text(totalCost);
+        $(".td-address").click(function () {
+            $(".td-address").children("input:radio").prop("checked",false);
+           $(this).children("input:radio").prop("checked",true);
+        });
+    });
+</script>

@@ -11,6 +11,8 @@ use app\admin\model\User;
 use app\admin\model\Cate;
 use app\admin\model\Pro;
 use app\admin\model\Album;
+use app\admin\model\ShopCar;
+use app\admin\model\Address;
 
 class Index extends Controller
 {
@@ -41,11 +43,15 @@ class Index extends Controller
 //        $this->view->engine->layout(true);
         $cates = Cate::all();
         $this->assign('cates', $cates);
+        $this->assign('title', '首页');
         return $this->fetch();
     }
 
     public function login()
     {
+        $cates = Cate::all();
+        $this->assign('cates', $cates);
+        $this->assign('title', '用户登录');
         return $this->fetch();
     }
 
@@ -57,6 +63,9 @@ class Index extends Controller
 
     public function reg()
     {
+        $cates = Cate::all();
+        $this->assign('cates', $cates);
+        $this->assign('title', '注册');
         return $this->fetch();
     }
 
@@ -98,10 +107,27 @@ class Index extends Controller
 
     public function proCate()
     {
+//        $this->view->engine->layout(true);
+        $request = Request::instance();
+        $id = $request->get('id');
+        $cates = Cate::all();
+        if ($id == "all") {
+            $cateNum = $cates;
+            $id = 0;
+            $this->assign('title', '全部商品');
+        } else {
+            $cateNum = Cate::all(["id" => $id]);
+            foreach ($cateNum as $cate) {
+                $this->assign('title', $cate['cName']);
+            }
+        }
+        $this->assign('cates', $cates);
+        $this->assign('cateNum', $cateNum);
+        $this->assign('id', $id);
         return $this->fetch();
     }
 
-    public function proDetails()
+    public function proDetailsOld()
     {
         $request = Request::instance();
         $id = $request->get('id');
@@ -115,15 +141,121 @@ class Index extends Controller
         return $this->fetch();
     }
 
-    public function shopCar()
+    public function proDetails()
     {
+        $request = Request::instance();
+        $id = $request->get('id');
+        $str = "p.id,p.pName,p.pSn,p.pNum,p.mPrice,p.iPrice,p.pDesc,p.pubTime,p.isShow,p.isHot,c.cName,p.cId";
+        $proInfo = Pro::alias('p')->field($str)->join('shop_cate c', 'p.cId=c.id')->where(['p.id' => $id])->find();
+        $proImgs = Album::where(['pid' => $id])->column('albumPath');
+        $cates = Cate::all();
+        $this->assign('cates', $cates);
+        $this->assign('proInfo', $proInfo);
+        $this->assign('proImgs', $proImgs);
+        $this->assign('id', $id);
+        $this->assign('title', $proInfo['pName']);
         return $this->fetch();
     }
 
-    public function filter()
+    public function shopCar()
     {
+        $cates = Cate::all();
+        $request = Request::instance();
+        $uid = $request->get("uid");
+        $rows = ShopCar::all(["uid" => $uid]);
+        $this->assign('cates', $cates);
+        $this->assign('rows', $rows);
+        $this->assign('title', '我的购物车');
         return $this->fetch();
+    }
 
+    public function shopCarOld()
+    {
+        $cates = Cate::all();
+        $this->assign('cates', $cates);
+        $this->assign('title', '我的购物车');
+        return $this->fetch();
+    }
+
+    public function addShopCar()
+    {
+        $request = Request::instance();
+        $data = $request->post();
+        $shopCar = new ShopCar($data);
+        if ($shopCar->allowField(true)->save()) {
+            echo "添加成功";
+        } else {
+            echo "添加失败";
+        }
+    }
+
+    public function delShopCar()
+    {
+        $request = Request::instance();
+        $data = $request->post();
+        $id = explode(",", $data['id']);
+        $res = ShopCar::destroy($id);
+        if ($res) {
+            echo "删除成功";
+        } else {
+            echo "删除失败";
+        }
+    }
+
+    public function settlement()
+    {
+        $cates = Cate::all();
+        $request = Request::instance();
+        $data = $request->get();
+        $id = explode(",", $data['id']);
+        $rows=ShopCar::all($id);
+        $adds = Address::all(["uId" => $data['uId']]);
+        if ($adds == null){
+            alertMes("请添加收货地址");
+            echo "<script>location.href='addAddress?uId=".$data['uId']."';</script>";
+//            $this->success('', 'addAddress?uId='.$data['uId']);
+        }
+        $this->assign('rows', $rows);
+        $this->assign('adds', $adds);
+        $this->assign('cates', $cates);
+        $this->assign('title', '清单结算');
+        return $this->fetch();
+    }
+
+    public function address(){
+        $request = Request::instance();
+        $dataPost = $request->post();
+        if ($dataPost['action'] == "add"){
+            $address = new Address($dataPost);
+            if ($address->allowField(true)->save()) {
+                echo "添加成功";
+            } else {
+                echo "添加失败";
+            }
+        }
+    }
+
+    public function addAddress(){
+        $cates = Cate::all();
+        $request = Request::instance();
+        $data = $request->get();
+        $this->assign('uId', $data['uId']);
+        $this->assign('cates', $cates);
+        $this->assign('title', '清单结算');
+        return $this->fetch();
+    }
+
+    public function search()
+    {
+        $request = Request::instance();
+        $keywords = $request->get('keywords');
+        $cates = Cate::all();
+        $pros = Pro::where("pName like '%{$keywords}%'")->select();
+        $this->assign('proName', $keywords);
+        $this->assign('cates', $cates);
+        $this->assign('pros', $pros);
+        $this->assign('title', $keywords . '_搜索结果');
+        return $this->fetch();
     }
 
     public function _empty()

@@ -8,13 +8,6 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-use think\Route;
-use app\admin\model\Cate;
-
-Route::get('/', function () {
-    $cates = Cate::all();
-    return view('index@index/index', ['cates' => $cates]);
-});
 
 return [
     '__pattern__' => [

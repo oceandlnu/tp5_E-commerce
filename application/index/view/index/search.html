@@ -1,0 +1,23 @@
+{layout name="layout" /}
+<div class="row" style="background-color: #9a9afb;padding: 15px">
+        <div class="container border border-secondary rounded" style="padding-top: 5px;margin-bottom: 20px">
+            <div class="row" style="margin-bottom: 10px">
+                {foreach $pros as $pro}
+                {assign name="proImg" value="$pro.id|getProImgById"}
+                <div class="col-3">
+                    <div class="card">
+                        <a href="__PUBLIC__index/index/proDetails?id={$pro.id}">
+                            <img class="card-img-top img-thumbnail" src="__STATIC__index/images/uploads/{$proImg}" alt="Shop image">
+                        </a>
+                        <div class="card-body">
+                            <h4 class="card-title"><a href="__PUBLIC__index/index/proDetails?id={$pro.id}" class="text-dark">
+                                {$pro.pName}</a></h4>
+                            <p class="card-text text-danger font-weight-bold">{$pro.iPrice}元</p>
+                            <a href="__PUBLIC__index/index/proDetails?id={$pro.id}" class="btn btn-primary">查看详情</a>
+                        </div>
+                    </div>
+                </div>
+                {/foreach}
+            </div>
+        </div>
+</div>
