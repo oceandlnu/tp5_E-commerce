@@ -18,6 +18,7 @@ use app\admin\model\User;
 use app\admin\model\Cate;
 use app\admin\model\Pro;
 use app\admin\model\Album;
+use app\admin\model\Order;
 
 class Index extends Controller
 {
@@ -586,8 +587,26 @@ class Index extends Controller
         $this->success('', 'listProImages', '', 1);
     }
 
-    public function test()
+    public function listOrder()
     {
+        $request = Request::instance();
+        $page = $request->has('page', 'get') ? $request->get('page') : 1;
+        $keywords = $request->has('keywords', 'get') ? $request->get('keywords') : null;
+        $order = $request->has('order', 'get') ? $request->get('order') : null;
+        //每页显示size条数据
+        $url = $request->baseUrl();
+        $size = 2;
+        $str = "o.id,o.uId,o.oNum,o.oName,o.oPrice";
+        $rows = Db::name('order')->field($str)->alias('o')->where("o.oNum like '%{$keywords}%'")->order($order)->paginate($size);
+        $total = $rows->total();
+        $totalPage = ceil($total / $size);
+        $showPage = showPage($page, $totalPage, $url, "keywords={$keywords}&order={$order}");
+        // 把分页数据赋值给模板变量rows
+        $this->assign('rows', $rows);
+        $this->assign('size', $size);
+        $this->assign('total', $total);
+        $this->assign('showPage', $showPage);
+        // 渲染模板输出
         return $this->fetch();
     }
 }

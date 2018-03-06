@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>商品列表</title>
+    {literal}
+    <link rel="stylesheet" href="__STATIC__admin/styles/backstage.css">
+    <link rel="stylesheet" href="__STATIC__admin/scripts/jquery-ui/css/ui-lightness/jquery-ui-1.10.4.custom.css"/>
+    <script src="__STATIC__admin/scripts/jquery-ui/js/jquery-1.10.2.js"></script>
+    <script src="__STATIC__admin/scripts/jquery-ui/js/jquery-ui-1.10.4.custom.js"></script>
+    <script src="__STATIC__admin/scripts/jquery-ui/js/jquery-ui-1.10.4.custom.min.js"></script>
+    {/literal}
+</head>
+
+<body>
+<div id="showDetail" style="display:none;">
+
+</div>
+<div class="details">
+    <div class="details_operation clearfix">
+        <div class="fr">
+            <div class="text">
+                <span>商品价格：</span>
+                <div class="bui_select">
+                    <select class="select" onchange="change(this.value)">
+                        <option value="">-请选择-</option>
+                        <option value="p.iPrice asc">由低到高</option>
+                        <option value="p.iPrice desc">由高到低</option>
+                    </select>
+                </div>
+            </div>
+            <div class="text">
+                <span>上架时间：</span>
+                <div class="bui_select">
+                    <select class="select" onchange="change(this.value)">
+                        <option value="">-请选择-</option>
+                        <option value="p.pubTime desc">最新发布</option>
+                        <option value="p.pubTime asc">历史发布</option>
+                    </select>
+                </div>
+            </div>
+            <div class="text">
+                <span>搜索</span>
+                <input type="text" value="" class="search" id="search" onkeypress="search()" placeholder="请输入订单编号">
+            </div>
+        </div>
+    </div>
+    <!--表格-->
+    <table class="table" cellspacing="0" cellpadding="0">
+        <thead>
+        <tr>
+            <th width="10%">ID</th>
+            <th width="20%">订单编号</th>
+            <th width="20%">订单名称</th>
+            <th width="20%">订单总价</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $rows as $row}
+        <tr>
+            <td><input type="checkbox" id="{$row.id}" class="check"><label
+                    for="{$row.id}" class="label">{$row.id}</label></td>
+            <td>{$row.oNum}</td>
+            <td>{$row.oName}</td>
+            <td>{$row.oPrice}元</td>
+            <td align="center">
+                <input type="button" value="关闭订单" class="btn" name="{$row.id}">
+            </td>
+        </tr>
+        {/foreach}
+        {if $total gt $size}
+        <tr>
+            <td colspan="5">{$showPage}</td>
+        </tr>
+        {/if}
+        </tbody>
+    </table>
+</div>
+{literal}
+<script type="text/javascript">
+    function delOrder(id) {
+        if (window.confirm("确定要删除吗?删除之后不可恢复")) {
+        }
+    }
+
+    function search() {
+        if (event.keyCode === 13) {
+            var val = document.getElementById("search").value;
+            window.location = "listOrder?keywords=" + val;
+        }
+    }
+
+    function change(val) {
+        window.location = "listOrder?order=" + val;
+    }
+    $(document).ready(function () {
+        $(".btn").click(function () {
+            if (window.confirm("确定要执行操作吗?操作之后不可恢复")) {
+                var id=$(this).attr("name");
+                $.post("__PUBLIC__index/index/order",{
+                    id:id,
+                    action:"del"
+                },function (data,status) {
+                    alert(data);
+                    location.reload(true);
+                });
+            }
+        });
+    });
+</script>
+{/literal}
+</body>
+</html>

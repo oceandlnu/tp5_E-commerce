@@ -13,6 +13,7 @@ use app\admin\model\Pro;
 use app\admin\model\Album;
 use app\admin\model\ShopCar;
 use app\admin\model\Address;
+use app\admin\model\Order;
 
 class Index extends Controller
 {
@@ -232,6 +233,12 @@ class Index extends Controller
             } else {
                 echo "添加失败";
             }
+        }elseif ($dataPost['action'] == "del"){
+            if (Address::destroy(['id'=>$dataPost['id']])) {
+                echo "删除成功";
+            } else {
+                echo "删除失败";
+            }
         }
     }
 
@@ -241,8 +248,52 @@ class Index extends Controller
         $data = $request->get();
         $this->assign('uId', $data['uId']);
         $this->assign('cates', $cates);
-        $this->assign('title', '清单结算');
+        $this->assign('title', '添加收货地址');
         return $this->fetch();
+    }
+
+    public function modAddress(){
+        $cates = Cate::all();
+        $request = Request::instance();
+        $data = $request->get();
+        $row = Address::get($data['id']);
+        $this->assign('row', $row);
+        $this->assign('uId', $data['uId']);
+        $this->assign('cates', $cates);
+        $this->assign('title', '修改收货地址');
+        return $this->fetch();
+    }
+
+    public function doModAddress(){
+        $request = Request::instance();
+        $data = $request->post();
+        $id = $data['id'];
+        $address = new Address();
+        if ($address->allowField(true)->save($data, ['id' => $id])){
+            echo "修改成功";
+        }else{
+            echo "修改失败";
+        }
+    }
+
+    public function order(){
+        $request = Request::instance();
+        $dataPost = $request->post();
+        if ($dataPost['action'] == "add"){
+            $dataPost['oNum']=time();
+            $order = new Order($dataPost);
+            if ($order->allowField(true)->save()) {
+                echo "提交成功";
+            } else {
+                echo "提交失败";
+            }
+        }elseif ($dataPost['action'] == "del"){
+            if (Order::destroy(['id'=>$dataPost['id']])) {
+                echo "操作成功";
+            } else {
+                echo "操作失败";
+            }
+        }
     }
 
     public function search()
