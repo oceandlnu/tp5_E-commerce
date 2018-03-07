@@ -211,16 +211,20 @@ class Index extends Controller
         $id = explode(",", $data['id']);
         $rows=ShopCar::all($id);
         $adds = Address::all(["uId" => $data['uId']]);
-        if ($adds == null){
+        if ($rows == null){
+            alertMes("请选择商品");
+            echo "<script>window.history.back();</script>";
+        }elseif ($adds == null){
             alertMes("请添加收货地址");
             echo "<script>location.href='addAddress?uId=".$data['uId']."';</script>";
 //            $this->success('', 'addAddress?uId='.$data['uId']);
+        }else {
+            $this->assign('rows', $rows);
+            $this->assign('adds', $adds);
+            $this->assign('cates', $cates);
+            $this->assign('title', '清单结算');
+            return $this->fetch();
         }
-        $this->assign('rows', $rows);
-        $this->assign('adds', $adds);
-        $this->assign('cates', $cates);
-        $this->assign('title', '清单结算');
-        return $this->fetch();
     }
 
     public function address(){

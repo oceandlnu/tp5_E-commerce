@@ -50,9 +50,10 @@
         <thead>
         <tr>
             <th width="10%">ID</th>
-            <th width="20%">订单编号</th>
-            <th width="20%">订单名称</th>
-            <th width="20%">订单总价</th>
+            <th width="15%">订单编号</th>
+            <th width="15%">订单名称</th>
+            <th width="15%">订单总价</th>
+            <th width="15%">收货地址</th>
             <th>操作</th>
         </tr>
         </thead>
@@ -64,6 +65,7 @@
             <td>{$row.oNum}</td>
             <td>{$row.oName}</td>
             <td>{$row.oPrice}元</td>
+            <td><span style="margin-right: 10px">{$row.address}</span>({$row.name} 收){$row.telephone}</td>
             <td align="center">
                 <input type="button" value="关闭订单" class="btn" name="{$row.id}">
             </td>

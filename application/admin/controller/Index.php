@@ -596,8 +596,8 @@ class Index extends Controller
         //每页显示size条数据
         $url = $request->baseUrl();
         $size = 2;
-        $str = "o.id,o.uId,o.oNum,o.oName,o.oPrice";
-        $rows = Db::name('order')->field($str)->alias('o')->where("o.oNum like '%{$keywords}%'")->order($order)->paginate($size);
+        $str = "o.id,o.uId,o.aId,o.oNum,o.oName,o.oPrice,a.address,a.name,a.telephone";
+        $rows = Db::name('order')->field($str)->alias('o')->where("o.oNum like '%{$keywords}%'")->order($order)->join('shop_address a', 'o.aId=a.id')->paginate($size);
         $total = $rows->total();
         $totalPage = ceil($total / $size);
         $showPage = showPage($page, $totalPage, $url, "keywords={$keywords}&order={$order}");

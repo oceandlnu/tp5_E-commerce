@@ -8,7 +8,7 @@
                     <tbody>
                     {foreach $adds as $add}
                     <tr>
-                        <td class="td-address"><input type="radio" id="{$add.id}" class="check"><label for="{$add.id}" class="label">{$add.address}</label></td>
+                        <td class="td-address"><input type="radio" id="{$add.id}" class="check"><label for="{$add.id}" class="label"><span style="margin-right: 10px">{$add.name}</span><span style="margin-right: 10px">{$add.address}</span>{$add.telephone}</label></td>
                         <td><button type="button" class="btn btn-danger delAddress float-right" name="{$add.id}" style="margin-left: 10px">删除</button><button type="button" class="btn btn-primary modAddress float-right" name="{$add.id}">修改</button></td>
                     </tr>
                     {/foreach}
@@ -96,6 +96,7 @@
 <script>
     $(document).ready(function () {
         var totalCost=0;
+        $(".td-address:first").children("input:radio").prop("checked",true);
         $(".cPrice").each(function () {
             totalCost+=parseInt($(this).text());
         });
@@ -107,14 +108,16 @@
         $(".subOrder").click(function () {
             var uId={$uId};
             var oName="{$row.pName}";
+            var aId=$(".td-address").children("input:radio:checked").attr("id");
             $.post("__PUBLIC__index/index/order", {
                 action:"add",
                 uId: uId,
+                aId: aId,
                 oName:oName,
                 oPrice:totalCost
             }, function (data, status) {
                 alert(data);
-                location.href="__PUBLIC__";
+//                location.href="__PUBLIC__";
             });
         });
         $(".delAddress").click(function () {

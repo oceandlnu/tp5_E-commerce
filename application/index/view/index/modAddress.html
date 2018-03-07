@@ -7,7 +7,16 @@
                 <table class="table table-bordered table-hover">
                     <tbody>
                     <tr>
-                        <td><textarea name="" id="address" cols="30" rows="10">{$row.address}</textarea><label for="address"></label></td>
+                        <td><label for="address"></label><textarea name="" id="address" cols="30" rows="10" placeholder="请填写详细地址">{$row.address}</textarea></td>
+                    </tr>
+                    <tr>
+                        <td><label for="postalCode">邮政编码:</label><input type="text" class="form-control" id="postalCode" placeholder="如您不清楚邮递区号，请填写000000" value="{$row.postalCode}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="name">收货人姓名:</label><input type="text" class="form-control" id="name" value="{$row.name}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="telephone">手机号码:</label><input type="text" class="form-control" id="telephone" value="{$row.telephone}"></td>
                     </tr>
                     <tr>
                         <td><button class="btn btn-danger modAddress" type="button">提交修改</button></td>
@@ -22,11 +31,16 @@
     $(document).ready(function () {
         $(".modAddress").click(function () {
             var id={$row.id};
-            var uId={$uId};
             var address=$("#address").val();
+            var postalCode=$("#postalCode").val();
+            var name=$("#name").val();
+            var telephone=$("#telephone").val();
             $.post("__PUBLIC__index/index/doModAddress",{
                 id:id,
-                address:address
+                address:address,
+                postalCode:postalCode,
+                name:name,
+                telephone:telephone
             },function (data,status) {
                 alert(data);
                 location.href="__PUBLIC__index/index/shopCar?uid="+{$uId};

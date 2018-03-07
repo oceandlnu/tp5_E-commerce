@@ -3,11 +3,20 @@
     <div class="container">
         <div class="row" style="margin-top: 20px">
             <div class="col-12 card" style="padding: 30px;margin-top: 10px">
-                <h3>添加收货地址</h3>
+                <h3>收货地址</h3>
                 <table class="table table-bordered table-hover">
                     <tbody>
                     <tr>
-                        <td><textarea name="" id="address" cols="30" rows="10"></textarea></td>
+                        <td><label for="address"></label><textarea name="" id="address" cols="30" rows="10" placeholder="请填写详细地址"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td><label for="postalCode">邮政编码:</label><input type="text" class="form-control" id="postalCode" placeholder="如您不清楚邮递区号，请填写000000"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="name">收货人姓名:</label><input type="text" class="form-control" id="name" ></td>
+                    </tr>
+                    <tr>
+                        <td><label for="telephone">手机号码:</label><input type="text" class="form-control" id="telephone" ></td>
                     </tr>
                     <tr>
                         <td><button class="btn btn-danger addAddress" type="button">点击添加</button></td>
@@ -23,10 +32,16 @@
         $(".addAddress").click(function () {
             var uId={$uId};
             var address=$("#address").val();
+            var postalCode=$("#postalCode").val();
+            var name=$("#name").val();
+            var telephone=$("#telephone").val();
             $.post("__PUBLIC__index/index/address",{
                 action:"add",
                 uId:uId,
-                address:address
+                address:address,
+                postalCode:postalCode,
+                name:name,
+                telephone:telephone
             },function (data,status) {
                 alert(data);
                 location.href="__PUBLIC__index/index/shopCar?uid="+{$uId};
